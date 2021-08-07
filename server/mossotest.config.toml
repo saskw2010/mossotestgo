@@ -1,0 +1,7 @@
+PORT = 3000
+PUBLIC = "public"
+TOKEN = "secret"
+[Mongo]
+  URL = "localhost:27017"
+  DBName = "mossotest_db"
+

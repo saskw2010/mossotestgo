@@ -1,0 +1,15 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "resource",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+using {{project.name}}.Rest.Base;
+
+namespace {{project.name}}.Rest
+{
+    public class {{capitalize resource.name}}RestService : {{capitalize resource.name}}RestServiceBase
+    {
+    }
+}

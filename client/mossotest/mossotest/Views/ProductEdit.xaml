@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:mossotest.Views"
+             x:Class="mossotest.Views.ProductEdit"
+             Title="Product">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Frame AbsoluteLayout.LayoutBounds="1, 1, 1, 1" AbsoluteLayout.LayoutFlags="All" Margin="15" VerticalOptions="StartAndExpand">
+                <StackLayout Spacing="15">
+                    <StackLayout.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                                <Setter Property="TextColor" Value="{StaticResource Secondary}"/>
+                            </Style>
+                            <Style TargetType="Entry">
+                                <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                                <Setter Property="IsSpellCheckEnabled" Value="False"/>
+                                <Setter Property="Keyboard" Value="Text"/>
+                            </Style>
+                            <Style TargetType="StackLayout">
+                                <Setter Property="Spacing" Value="5"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </StackLayout.Resources>
+                    <StackLayout>
+                        <Label Text="Catid"/>
+                        <Entry x:Name="entry_catid" Text="{Binding Product.Catid, Mode=TwoWay}"
+                               Placeholder="catid" Keyboard="Numeric"  TextChanged="DataChanged_Handler"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Productname"/>
+                        <Entry x:Name="entry_productname" Text="{Binding Product.Productname, Mode=TwoWay}"
+                               Placeholder="productname"   TextChanged="DataChanged_Handler"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Category"/>
+                        <Picker x:Name="picker_catpro" Title="catpro" ItemsSource="{Binding CategoryList}" TextColor="{StaticResource Primary}"
+                                SelectedItem="{ Binding Catpro }" ItemDisplayBinding="{Binding QualifiedName}"/>
+                    </StackLayout>
+                    <Button x:Name="button_save" Text="Save" Clicked="SaveProduct_Handler" IsEnabled="false"/>
+                </StackLayout>
+            </Frame>
+            <local:LoadingView x:Name="loading_view" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1, 1, 1, 1"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

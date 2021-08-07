@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:{{project.name}}.Extensions"
+             x:Class="{{project.name}}.Views.{{capitalize module.name}}"
+             Title="{{capitalize crudResource.name}}">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="1, 1, 1, 1" AbsoluteLayout.LayoutFlags="All" Spacing="0">
+                <SearchBar Placeholder="Search a {{capitalize crudResource.name}}" CancelButtonColor="{StaticResource Contrast}" BackgroundColor="{StaticResource Primary}"
+                           SearchCommand="{Binding SearchCommand}" SearchCommandParameter="{Binding .}" 
+                           Unfocused="SearchBar_Unfocused" Focused="SearchBar_Focused" TextChanged="SearchBar_TextChanged"/>
+                <ListView x:Name="listView" 
+                          AbsoluteLayout.LayoutFlags="All" BackgroundColor="White"
+                          SeparatorVisibility="None" HasUnevenRows="true"
+                          IsPullToRefreshEnabled="true" RefreshCommand="{Binding LoadDataCommand}"
+                          ItemSelected="ListView_ItemSelected" ItemsSource="{Binding {{capitalize crudResource.name}}List}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <extensions:CustomViewCell>
+                                <Frame Margin="20, 15">
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayout.Resources>
+                                            <ResourceDictionary>
+                                                <Style TargetType="StackLayout" >
+                                                    <Setter Property="Spacing" Value="5"/>
+                                                </Style>
+                                                <Style TargetType="Label">
+                                                    <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                                                    <Setter Property="FontSize" Value="18"/>
+                                                     <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                                                </Style>
+                                                <Style TargetType="Label" x:Key="header_label" CanCascade="true">
+                                                    <Setter Property="TextColor" Value="{StaticResource Secondary}"/>
+                                                    <Setter Property="FontAttributes" Value="Bold"/>
+                                                </Style>
+                                            </ResourceDictionary>
+                                        </StackLayout.Resources>
+                                        <StackLayout HorizontalOptions="FillAndExpand" Spacing="15" x:Name="{{lowercase crudResource.name}}Item">{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#notEqual type "Number"}}{{#notEqual type "Integer"}}{{#notEqual type "Decimal"}}{{#notEqual type "Date"}}
+                                            <StackLayout>
+                                                <Label Text="{{capitalize name}}" Style="{StaticResource header_label}" />
+                                                <Label Text="{ Binding {{capitalize name}} }"/>
+                                            </StackLayout>{{/notEqual}}{{/notEqual}}{{/notEqual}}{{/notEqual}}{{/notEqual}}{{/each}}{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#equal type "Date"}}
+                                            <StackLayout>
+                                                <Label Text="{{capitalize name}}" Style="{StaticResource header_label}" />
+                                                <Label Text="{Binding {{capitalize name}}, StringFormat='{}{0:dd/MM/yyyy}'}"/>
+                                            </StackLayout>{{/equal}}{{/notEqual}}{{/each}}{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#equal type "Number"}}
+                                            <StackLayout>
+                                                <Label Text="{{capitalize name}}" Style="{StaticResource header_label}" />
+                                                <Label Text="{ Binding {{capitalize name}} }"/>
+                                            </StackLayout>{{/equal}}{{/notEqual}}{{/each}}{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#equal type "Decimal"}}
+                                            <StackLayout>
+                                                <Label Text="{{capitalize name}}" Style="{StaticResource header_label}" />
+                                                <Label Text="{ Binding {{capitalize name}} }"/>
+                                            </StackLayout>{{/equal}}{{/notEqual}}{{/each}}{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#equal type "Integer"}}
+                                            <StackLayout>
+                                                <Label Text="{{capitalize name}}" Style="{StaticResource header_label}" />
+                                                <Label Text="{ Binding {{capitalize name}} }"/>
+                                            </StackLayout>{{/equal}}{{/notEqual}}{{/each}}
+                                        </StackLayout>
+                                        <StackLayout HorizontalOptions="End">
+                                            <Image Source="{StaticResource delete_img}" VerticalOptions="StartAndExpand" HeightRequest="20">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}" 
+                                                                          Command="{Binding Delete{{capitalize crudResource.name}}Command}" CommandParameter="{Binding Source={x:Reference {{lowercase crudResource.name}}Item}, Path=BindingContext}"/>
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                            <Image Source="{StaticResource edit_img}" VerticalOptions="EndAndExpand" HeightRequest="20">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}"
+                                                                          Command="{Binding AddOrEdit{{capitalize crudResource.name}}Command}" CommandParameter="{Binding Source={x:Reference {{lowercase crudResource.name}}Item}, Path=BindingContext}"/>
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </extensions:CustomViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

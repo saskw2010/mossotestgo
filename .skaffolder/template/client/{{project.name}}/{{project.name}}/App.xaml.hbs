@@ -1,0 +1,52 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="{{project.name}}.App">
+	<Application.Resources>
+        <ResourceDictionary>
+            
+            <!-- COLORS -->
+        
+            <Color x:Key="Primary">#7970F5</Color>
+            <Color x:Key="Secondary">DarkBlue</Color>
+            <Color x:Key="Contrast">White</Color>
+            
+            <!-- IMAGES -->
+            
+            <x:String x:Key="delete_img">delete.png</x:String>
+            <x:String x:Key="edit_img">edit.png</x:String>
+            <x:String x:Key="add_img">add.png</x:String>
+            <x:String x:Key="padlock_img">padlock.png</x:String>
+            <x:String x:Key="user_img">user.png</x:String>
+            <x:String x:Key="menu_img">menu.png</x:String>
+            
+            <!-- STYLES -->
+            
+            <Style TargetType="NavigationPage">
+                <Setter Property="BarTextColor" Value="{StaticResource Contrast}"/>
+                <Setter Property="BarBackgroundColor" Value="{StaticResource Primary}"/>
+            </Style>
+            
+            <Style TargetType="Frame">
+                <Setter Property="CornerRadius" Value="10"/>
+                <Setter Property="BackgroundColor" Value="{StaticResource Contrast}"/>
+                <Setter Property="Padding" Value="10"/>
+                <Setter Property="BorderColor" Value="{StaticResource Contrast}"/>
+            </Style>
+            
+            <Style TargetType="Button">
+                <Setter Property="BackgroundColor" Value="{StaticResource Primary}"/>
+                <Setter Property="TextColor" Value="{StaticResource Contrast}"/>
+                <Setter Property="FontAttributes" Value="Bold"/>
+            </Style>
+            
+        </ResourceDictionary>
+	</Application.Resources>
+</Application>

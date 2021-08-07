@@ -1,0 +1,93 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using {{project.name}}.Extensions;
+using {{project.name}}.Models;
+using {{project.name}}.Views;
+using Rg.Plugins.Popup.Services;
+using Xamarin.Forms;
+
+namespace {{project.name}}.ViewModels.ResourcesViewModel
+{
+    public class {{capitalize module.name}}ViewModel : BaseViewModel
+    {
+        #region Constants
+
+        readonly static string POPUP_DELETE_MESSAGE = "Are you sure you want to delete this {{capitalize crudResource.name}}?";
+
+        #endregion
+
+        #region Attributes and Properties
+
+        // this collection main purpose is to store data from API request
+        ObservableCollection<{{capitalize crudResource.name}}> _supportList;
+
+        // this one instead is the ItemSource of the iew. 
+        // this allows to modify without any exceptions, the elements of the ListView.
+        ObservableCollection<{{capitalize crudResource.name}}> _{{lowercase crudResource.name}}List;
+
+        public ObservableCollection<{{capitalize crudResource.name}}> {{capitalize crudResource.name}}List
+        {
+            get { return _{{lowercase crudResource.name}}List; }
+            set { SetValue(ref _{{lowercase crudResource.name}}List, value); }
+        }
+
+        #endregion
+
+        #region Commands
+
+        public ICommand LoadDataCommand => new Command(async obj => await Refresh{{capitalize crudResource.name}}List());
+        public ICommand Delete{{capitalize crudResource.name}}Command => new Command<{{capitalize crudResource.name}}>(async obj => await Delete{{capitalize crudResource.name}}FromList(obj));
+        public ICommand AddOrEdit{{capitalize crudResource.name}}Command => new Command<{{capitalize crudResource.name}}>(async obj => await AddOrEdit{{capitalize crudResource.name}}(obj));
+        public ICommand SearchCommand => new Command<string>(obj => Filter{{capitalize crudResource.name}}List(obj));
+
+        #endregion
+        
+        async Task AddOrEdit{{capitalize crudResource.name}}({{capitalize crudResource.name}} toEdit)
+        {   {{#each module._links as |link|}}{{#equal template "Edit_Crud"}}
+            await (Application.Current.MainPage as MasterDetailPage).Detail.Navigation.PushAsync(new {{capitalize name}}(toEdit));{{/equal}}{{/each}}
+        }
+
+        async Task Refresh{{capitalize crudResource.name}}List()
+        {
+            OnLoadingStarted(EventArgs.Empty);
+
+            _supportList = await App.{{capitalize crudResource.name}}Service.GETList();
+            {{capitalize crudResource.name}}List = _supportList;
+
+            OnLoadingEnded(EventArgs.Empty);
+        }
+
+        public void Restore{{capitalize crudResource.name}}List()
+        {
+            {{capitalize crudResource.name}}List = _supportList;
+        }
+
+        async Task Delete{{capitalize crudResource.name}}FromList({{capitalize crudResource.name}} {{crudResource.name}}) 
+        {
+            CustomAlertPopUp popUp = new CustomAlertPopUp(POPUP_DELETE_MESSAGE);
+            popUp.ButtonClickedEvent += async (sender, e) =>
+            {
+                await App.{{capitalize crudResource.name}}Service.DELETE({{crudResource.name}}.Id);
+                await Refresh{{capitalize crudResource.name}}List();
+            };
+
+            await PopupNavigation.Instance.PushAsync(popUp);
+        }
+
+        void Filter{{capitalize crudResource.name}}List(string query) 
+        {
+            if (!string.IsNullOrWhiteSpace(query))
+            {
+                // the filtering of elements is based on the elements Id. 
+                // in case you wish to change, just replace el.Id with el.OtherField
+                var tempRecords = _supportList.Where(el => el.Id.ToLower().Contains(query.ToLower()));
+                {{capitalize crudResource.name}}List = new ObservableCollection<{{capitalize crudResource.name}}>(tempRecords);
+            }
+            else
+                {{capitalize crudResource.name}}List = new ObservableCollection<{{capitalize crudResource.name}}>();
+        }
+    }
+}

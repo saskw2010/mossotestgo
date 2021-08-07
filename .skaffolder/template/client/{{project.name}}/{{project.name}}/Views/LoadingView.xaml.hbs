@@ -1,0 +1,18 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<ContentView xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
+             x:Class="{{project.name}}.Views.LoadingView"
+             IsVisible="false">
+    <ContentView.Content>
+        <StackLayout BackgroundColor="Black" Opacity="0.4">
+                <ActivityIndicator VerticalOptions="CenterAndExpand" Color="White" IsRunning="true"/>
+        </StackLayout>
+    </ContentView.Content>
+</ContentView>

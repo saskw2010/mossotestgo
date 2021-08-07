@@ -1,0 +1,71 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:{{project.name}}.Views"
+             x:Class="{{project.name}}.Views.Profile"
+             Title="My Profile">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Frame x:Name="MainElement" 
+                   VerticalOptions="StartAndExpand" Margin="15"
+                   AbsoluteLayout.LayoutBounds="1, 1, 1, 1" AbsoluteLayout.LayoutFlags="All">
+                <StackLayout Spacing="15">
+                    <StackLayout.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                                <Setter Property="TextColor" Value="{StaticResource Secondary}"/>
+                            </Style>
+                            <Style TargetType="Entry">
+                                <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                                <Setter Property="IsSpellCheckEnabled" Value="False"/>
+                                <Setter Property="Keyboard" Value="Text"/>
+                                <Setter Property="IsEnabled" Value="false"/>
+                            </Style>
+                            <Style TargetType="StackLayout">
+                                <Setter Property="Spacing" Value="5"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </StackLayout.Resources>
+                    <StackLayout>
+                        <Label Text="Username"/>
+                        <Label Text="{Binding User.Username}" HorizontalTextAlignment="Center"
+                               TextColor="{StaticResource Primary}"
+                               FontAttributes="None"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Name"/>
+                        <Entry x:Name="entry_name" Text="{Binding User.Name, Mode=TwoWay}"
+                               Placeholder="Add your name"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Last Name"/>
+                        <Entry x:Name="entry_lastname" Text="{Binding User.Surname, Mode=TwoWay}" 
+                               Placeholder="Add your lastname"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Email"/>
+                        <Entry x:Name="entry_mail" Text="{Binding User.Mail}" Keyboard="Email" 
+                               Placeholder="Add your email"/>
+                    </StackLayout>
+                    <Button Text="Change password"
+                            Clicked="Change_Password_Handler"
+                            BackgroundColor="Transparent"
+                            TextColor="{StaticResource Secondary}"/>
+                    <Button x:Name="button_save" Text="Save"
+                            Clicked="Save_User_Handler"
+                            IsVisible="false"/>
+                </StackLayout>
+            </Frame>
+            <local:LoadingView x:Name="loading_view" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1, 1, 1, 1"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

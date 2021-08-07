@@ -1,0 +1,67 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using {{project.name}}.Models;
+using {{project.name}}.ViewModels.ResourcesViewModel;
+using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
+
+namespace {{project.name}}.Views
+{
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class {{capitalize module.name}} : ContentPage
+    {
+        // set ViewModel for BindingContext
+        {{capitalize module.name}}ViewModel _viewModel
+        {
+            get { return BindingContext as {{capitalize module.name}}ViewModel; }
+            set { BindingContext = value; }
+        }
+
+        public {{capitalize module.name}}() 
+        {
+            InitializeComponent();{{#each crudResource._entity._attrs}}{{#notNull _enum}}
+            List<{{type}}> {{capitalize name}}List = new List<{{type}}>
+            { {{#each _enum}}
+                "{{name}}"{{#unless @last}},{{/unless}}{{/each}}
+            }; 
+            picker_{{lowercase name}}.ItemsSource = {{capitalize name}}List;{{/notNull}}{{/each}}{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#equal type "Date"}}{{#isNull _enum}}
+            datepicker_{{lowercase name}}.MaximumDate = DateTime.Today;{{/isNull}}{{/equal}}{{/notEqual}}{{/each}}
+        } 
+
+        public {{capitalize module.name}}({{capitalize crudResource.name}} {{lowercase crudResource.name}}) : this()
+        {
+            // setting BindingContext
+            _viewModel = new {{capitalize module.name}}ViewModel({{lowercase crudResource.name}});
+
+            _viewModel.LoadingStartedEvent += (sender, e) => { loading_view.IsVisible = true; };
+            _viewModel.LoadingEndedEvent += (sender, e) => { loading_view.IsVisible = false; };{{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}{{#equal @index 0}}
+            _viewModel.DataLoadedEvent += (s, args) =>
+            {   {{#each ./../crudResource._entity._relations}}{{#equal type "m:m"}}{{#notEqual ./../_ent1._id _ent2._id}}
+                _viewModel.{{capitalize name}}List.CollectionChanged += (sender{{@index}}, e{{@index}}) => { button_save.IsEnabled = true; };{{/notEqual}}{{/equal}}{{/each}}
+            };{{/equal}}{{/equal}}{{/equal}}{{/each}}
+        }{{#each crudResource._entity._relations}}{{#equal type "m:m"}} {{#equal ./../crudResource._entity._id _ent1._id}}
+       
+        void {{capitalize _ent2.name}}Selected_Handler(object sender, ItemTappedEventArgs e)
+        {
+            _viewModel.{{capitalize _ent2.name}}PickedFromListCommand.Execute(e.Item);
+            (sender as ListView).SelectedItem = null;
+        }{{/equal}}{{/equal}}{{/each}}
+
+        async Task Save{{capitalize crudResource.name}}_Handler(object sender, EventArgs e)
+        {
+            await _viewModel.SaveOrEdit{{capitalize crudResource.name}}();
+            await Navigation.PopAsync();
+        }
+
+        void DataChanged_Handler(object sender, TextChangedEventArgs e)
+        {
+            button_save.IsEnabled = true{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#notEqual type "Date"}}{{#isNull _enum}}
+                && !string.IsNullOrWhiteSpace(entry_{{lowercase name}}.Text){{/isNull}}{{/notEqual}}{{/notEqual}}{{/each}};
+
+            if(_viewModel.Editing)
+                button_save.IsEnabled &= e.OldTextValue != null;
+        }
+    }
+}
+

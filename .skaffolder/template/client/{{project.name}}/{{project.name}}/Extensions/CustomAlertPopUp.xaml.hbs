@@ -1,0 +1,46 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms"
+           xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+           xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+           x:Class="{{project.name}}.Extensions.CustomAlertPopUp">
+    <AbsoluteLayout>
+        <Frame AbsoluteLayout.LayoutFlags="All"
+               VerticalOptions="Center"
+               Margin="30, 0, 30, 30">
+            <Frame.AbsoluteLayout.LayoutBounds>
+                <OnIdiom x:TypeArguments="Rectangle" Phone="0.5, 0.5, 1, 1" Tablet="0.5, 0.5, 0.7, 1"/>
+            </Frame.AbsoluteLayout.LayoutBounds>
+            <StackLayout Spacing="25">
+                <StackLayout.Resources>
+                    <ResourceDictionary>
+                        <Style TargetType="Label">
+                            <Setter Property="FontSize" Value="18"/>
+                            <Setter Property="HorizontalTextAlignment" Value="Center"/>
+                            <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+                            <Setter Property="TextColor" Value="{StaticResource Secondary}"/>
+                        </Style>
+                    </ResourceDictionary>
+                </StackLayout.Resources>
+                <StackLayout Orientation="Horizontal">
+                    <Label Text="{Binding AlertTitle}" FontAttributes="Bold"/>
+                    <Image VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"
+                           HeightRequest="20" Source="{StaticResource delete_img}">
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Dismiss_PopUp"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
+                <Label Text="{Binding Message}"/>
+                <Button Text="{Binding ButtonText}" VerticalOptions="EndAndExpand"
+                        Clicked="ButtonClicked_PopUp"/>
+            </StackLayout>
+        </Frame>
+    </AbsoluteLayout>
+</pages:PopupPage>

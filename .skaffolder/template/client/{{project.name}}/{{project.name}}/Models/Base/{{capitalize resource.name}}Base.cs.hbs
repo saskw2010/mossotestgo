@@ -1,0 +1,65 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "resource",
+    "overwrite": true,
+    "_partials": [
+        {
+            "name": "Id Attribute",
+            "tagFrom": "// Id Start",
+            "tagTo": "// Id End",
+            "template": "\t\tstring _id;\n\t\t[JsonProperty(PropertyName = \"_id\")]\n\t\tpublic string Id\n\t\t{\n\t\t\tget { return _id; }\n\t\t\tset { SetValue(ref _id, value); }\n\t\t}\n\t\t"
+        }
+    ]
+}
+**** END PROPERTIES SKAFFOLDER ****
+using System;
+using Newtonsoft.Json;
+using {{project.name}}.Support;
+
+namespace {{project.name}}.Models.Base
+{
+    public class {{capitalize resource.name}}Base : BaseBindableObject
+    {
+         // Id Start 
+
+        
+        // Id End 
+        {{#each resource._entity._attrs}}{{#notEqual name "roles"}}
+        {{toCType type}} {{lowercase name}};
+        [JsonProperty(PropertyName = "{{name}}")]
+        public {{toCType type}} {{capitalize name}}
+        {
+            get { return {{lowercase name}}{{#equal type "Date"}}.ToLocalTime(){{/equal}}; }
+            set { SetValue(ref {{lowercase name}}, value); }
+        }
+        {{/notEqual}}{{/each}}{{#each resource._entity._attrs}}{{#equal ./../resource.name "User"}}{{#equal name "roles"}}
+        {{toCType type}}[] {{lowercase name}};
+        [JsonProperty(PropertyName = "{{name}}")]
+        public {{toCType type}}[] {{capitalize name}}
+        {
+            get { return {{lowercase name}}; }
+            set { SetValue(ref {{lowercase name}}, value); }
+        }
+        {{/equal}}{{/equal}}{{/each}}{{#each resource._entity._relations}}{{#equal ./../resource._entity._id _ent1._id}}
+        string{{#equal type "m:m"}}[]{{/equal}} {{lowercase name}};
+        [JsonProperty(PropertyName = "{{name}}")]
+        public string{{#equal type "m:m"}}[]{{/equal}} {{capitalize name}}
+        {
+            get { return {{lowercase name}}; }
+            set { SetValue(ref {{lowercase name}}, value); }
+        }
+        {{/equal}}{{/each}}{{#equal resource.name "User"}}
+
+        string token;
+        [JsonProperty(PropertyName = "token")]
+        public string Token
+        {
+            get{ return token; }
+            set{ SetValue(ref token, value); }
+        }{{/equal}}{{#each resource._entity._relations}}{{#equal ./../resource._entity._id _ent2._id}}{{#equal @index 0}}
+        public string QualifiedName
+        {
+            get { return $"{{#each ./../resource._entity._attrs}}{{#notEqual name "password"}}{{#equal type "String"}}{{#unless @first}} {{/unless}}{ {{capitalize name}} }{{/equal}}{{/notEqual}}{{/each}}"; }
+        }{{/equal}}{{/equal}}{{/each}}
+    }
+}

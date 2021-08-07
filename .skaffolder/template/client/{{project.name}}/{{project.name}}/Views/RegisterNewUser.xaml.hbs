@@ -1,0 +1,79 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:{{project.name}}.Views"
+             x:Class="{{project.name}}.Views.RegisterNewUser"
+             Title="Manage Users">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Frame VerticalOptions="StartAndExpand"
+                   AbsoluteLayout.LayoutBounds="1, 1, 1, 1" AbsoluteLayout.LayoutFlags="All" Margin="15">
+                <StackLayout Spacing="15">
+                    <StackLayout.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                                <Setter Property="TextColor" Value="{StaticResource Secondary}"/>
+                            </Style>
+                            <Style TargetType="Entry">
+                                <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                                <Setter Property="IsSpellCheckEnabled" Value="False"/>
+                                <Setter Property="Keyboard" Value="Text"/>
+                            </Style>
+                            <Style TargetType="StackLayout">
+                                <Setter Property="Spacing" Value="5"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </StackLayout.Resources>
+                    <StackLayout>
+                        <Label Text="Username"/>
+                        <Entry x:Name="entry_username" Text="{Binding User.Username, Mode=TwoWay}"
+                               Placeholder="username" TextChanged="Data_Changed_Handler"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Name"/>
+                        <Entry x:Name="entry_name" Text="{Binding User.Name, Mode=TwoWay}"
+                               Placeholder="name" TextChanged="Data_Changed_Handler"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Last Name"/>
+                        <Entry x:Name="entry_lastname" Text="{Binding User.Surname, Mode=TwoWay}"
+                               Placeholder="last name" TextChanged="Data_Changed_Handler"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Email"/>
+                        <Entry x:Name="entry_mail" Text="{Binding User.Mail, Mode=TwoWay}"
+                               Placeholder="email" TextChanged="Data_Changed_Handler"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Password"/>
+                        <Entry x:Name="entry_password" Text="{Binding User.Password, Mode=TwoWay}"
+                               Placeholder="password" TextChanged="Data_Changed_Handler"
+                               IsPassword="true"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Confirm Password"/>
+                        <Entry x:Name="entry_password_confirm" Placeholder="confirm password" 
+                               TextChanged="Data_Changed_Handler" IsPassword="true"/>
+                    </StackLayout>
+                    <StackLayout>
+                        <Label Text="Role"/>
+                        <Picker x:Name="picker_role" Title="role" SelectedItem="{Binding Role, Mode=TwoWay}"
+                                SelectedIndexChanged="Data_Changed_Handler" TextColor="{StaticResource Primary}"/>
+                    </StackLayout>
+                    <Button x:Name="button_save" Text="Save" Clicked="Save_User_Handler"
+                            IsEnabled="false"/>
+                </StackLayout>
+            </Frame>
+            <local:LoadingView x:Name="loading_view" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1, 1, 1, 1"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

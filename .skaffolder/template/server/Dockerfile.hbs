@@ -1,0 +1,18 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+# Create image based on the Skaffolder GO image
+FROM skaffolder/golang-base 
+
+# Copy source files
+WORKDIR /go/src/skaffolder/{{project.name}}
+COPY . .
+
+# Install dependencies
+RUN go get
+RUN go build -o main . 
+
+CMD ["/go/src/skaffolder/{{project.name}}/main"]

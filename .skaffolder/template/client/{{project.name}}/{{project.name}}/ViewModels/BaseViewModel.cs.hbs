@@ -1,0 +1,32 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": false,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+using System;
+using {{project.name}}.Support;
+
+namespace {{project.name}}.ViewModels
+{
+    public abstract class BaseViewModel : BaseBindableObject
+    {
+        #region Events
+
+        public event EventHandler LoadingStartedEvent;
+        public event EventHandler LoadingEndedEvent;
+
+        #endregion
+
+        protected virtual void OnLoadingStarted(EventArgs e)
+        {
+            LoadingStartedEvent?.Invoke(this, e);
+        }
+
+        protected virtual void OnLoadingEnded(EventArgs e)
+        {
+            LoadingEndedEvent?.Invoke(this, e);
+        }
+    }
+}

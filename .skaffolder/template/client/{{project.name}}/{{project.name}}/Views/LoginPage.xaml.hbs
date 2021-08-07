@@ -1,0 +1,68 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:{{project.name}}.Views"
+             x:Class="{{project.name}}.Views.LoginPage"
+             BackgroundColor="{StaticResource Primary}"
+             NavigationPage.HasNavigationBar="False">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Frame
+                VerticalOptions="CenterAndExpand" 
+                AbsoluteLayout.LayoutFlags="All"
+                Margin="15">
+                <Frame.AbsoluteLayout.LayoutBounds>
+                    <OnIdiom x:TypeArguments="Rectangle" Phone="0.5, 0.5, 1, 1" Tablet="0.5, 0.5, 0.7, 1"/>
+                </Frame.AbsoluteLayout.LayoutBounds>
+                <StackLayout Spacing="20">
+                    <StackLayout.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Entry">
+                                <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                                <Setter Property="VerticalOptions" Value="CenterAndExpand"/>
+                                <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                            </Style>
+                            <Style TargetType="StackLayout" x:Key="stack_entry_style">
+                                <Setter Property="Spacing" Value="10"/>
+                                <Setter Property="Orientation" Value="Horizontal"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </StackLayout.Resources>
+                    <Label Text="Login"
+                           Margin="0, 10, 0, 0"
+                           TextColor="{StaticResource Secondary}"
+                           FontSize="20"
+                           FontAttributes="Bold"
+                           HorizontalTextAlignment="Center"/>
+                    <StackLayout Style="{StaticResource stack_entry_style}">
+                        <Image HeightRequest="30" Source="{StaticResource user_img}"/>
+                        <Entry x:Name="entry_username" Text="{Binding Username}"
+                               Keyboard="Email" Placeholder="Username" 
+                               Completed="Entry_Username_Completed"/>
+                    </StackLayout>
+                    <StackLayout Style="{StaticResource stack_entry_style}">
+                        <Image HeightRequest="30" Source="{StaticResource padlock_img}"/>
+                        <Entry x:Name="entry_password" Text="{Binding Password}" 
+                               IsPassword="true" Placeholder="Password"
+                               Completed="Entry_Password_Completed"/>
+                    </StackLayout>
+                     <Label x:Name="label_message"
+                            TextColor="Red"
+                            FontSize="Small"
+                            FontAttributes="Bold"
+                            HorizontalTextAlignment="Center"/>
+                    <Button x:Name="button_save" Text="Login"
+                            Clicked="Login_Clicked" BackgroundColor="{StaticResource Secondary}"/>
+                </StackLayout>
+            </Frame>
+            <local:LoadingView x:Name="loading_view" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1, 1, 1, 1"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

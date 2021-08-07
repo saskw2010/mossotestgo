@@ -1,0 +1,85 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:extensions="clr-namespace:{{project.name}}.Extensions"
+             x:Class="{{project.name}}.Views.UsersListStatic"
+             Title="Manage Users">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <StackLayout AbsoluteLayout.LayoutBounds="1, 1, 1, 1" AbsoluteLayout.LayoutFlags="All" Spacing="0">
+                <SearchBar Placeholder="Search a User" CancelButtonColor="{StaticResource Contrast}" BackgroundColor="{StaticResource Primary}"
+                           SearchCommand="{Binding SearchCommand}" SearchCommandParameter="{Binding .}" 
+                           Unfocused="SearchBar_Unfocused" Focused="SearchBar_Focused" TextChanged="SearchBar_TextChanged"/>
+                <ListView x:Name="listView" 
+                          AbsoluteLayout.LayoutFlags="All" BackgroundColor="White"
+                          SeparatorVisibility="None" HasUnevenRows="true"
+                          IsPullToRefreshEnabled="true" RefreshCommand="{Binding LoadDataCommand}"
+                          ItemSelected="ListView_ItemSelected" ItemsSource="{Binding UsersList}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <extensions:CustomViewCell>
+                                <Frame Margin="20, 15">
+                                    <StackLayout Orientation="Horizontal">
+                                        <StackLayout.Resources>
+                                            <ResourceDictionary>
+                                                <Style TargetType="StackLayout" >
+                                                    <Setter Property="Spacing" Value="5"/>
+                                                </Style>
+                                                <Style TargetType="Label">
+                                                    <Setter Property="HorizontalOptions" Value="FillAndExpand"/>
+                                                    <Setter Property="FontSize" Value="18"/>
+                                                     <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                                                </Style>
+                                                <Style TargetType="Label" x:Key="header_label" CanCascade="true">
+                                                    <Setter Property="TextColor" Value="{StaticResource Secondary}"/>
+                                                    <Setter Property="FontAttributes" Value="Bold"/>
+                                                </Style>
+                                            </ResourceDictionary>
+                                        </StackLayout.Resources>
+                                        <StackLayout HorizontalOptions="FillAndExpand" Spacing="15" x:Name="userItem">
+                                            <StackLayout>
+                                                <Label Text="Username" Style="{StaticResource header_label}" />
+                                                <Label Text="{Binding Username}"/>
+                                            </StackLayout>
+                                            <StackLayout>
+                                                <Label Text="Name" Style="{StaticResource header_label}" />
+                                                <Label Text="{Binding Name}"/>
+                                            </StackLayout>
+                                            <StackLayout>
+                                                <Label Text="Surname" Style="{StaticResource header_label}"/>
+                                                <Label Text="{Binding Surname}"/>
+                                            </StackLayout>
+                                            <StackLayout>
+                                                <Label Text="Email" Style="{StaticResource header_label}"/>
+                                                <Label Text="{Binding Mail}"/>
+                                            </StackLayout>
+                                            <StackLayout>
+                                                <Label Text="Role" Style="{StaticResource header_label}" />
+                                                <Label Text="{Binding Roles[0]}"/>
+                                            </StackLayout>
+                                        </StackLayout>
+                                        <StackLayout HorizontalOptions="End">
+                                            <Image Source="{StaticResource delete_img}" VerticalOptions="StartAndExpand" HeightRequest="20">
+                                                <Image.GestureRecognizers>
+                                                    <TapGestureRecognizer BindingContext="{Binding Source={x:Reference listView}, Path=BindingContext}" 
+                                                                          Command="{Binding DeleteUserCommand}" CommandParameter="{Binding Source={x:Reference userItem}, Path=BindingContext}"/>
+                                                </Image.GestureRecognizers>
+                                            </Image>
+                                        </StackLayout>
+                                    </StackLayout>
+                                </Frame>
+                            </extensions:CustomViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </StackLayout>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

@@ -1,0 +1,42 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+using System;
+using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
+
+namespace {{project.name}}.Views
+{
+    [XamlCompilation(XamlCompilationOptions.Compile)]
+    public partial class HomePage : ContentPage
+    {
+        public HomePage()
+        {
+            InitializeComponent();
+
+            UserButton.IsVisible = Settings.CurrentUserRole.Equals("ADMIN");
+        }
+
+        void ChangePage(object sender, EventArgs e)
+        {
+            var button = (sender as Button).Text;
+            Page page = null;
+
+            switch (button)
+            {   {{#each modules}}{{#equal template "List_Crud"}}
+                case "{{capitalize _resources.0.name}}":
+                    page = new {{capitalize name}}();
+                    break;{{/equal}}{{/each}}
+                case "User":
+                    page = new UsersListStatic();
+                    break;
+            }
+
+            (Application.Current.MainPage as MasterDetailPage).Detail = new NavigationPage(page);
+        }
+    }
+}

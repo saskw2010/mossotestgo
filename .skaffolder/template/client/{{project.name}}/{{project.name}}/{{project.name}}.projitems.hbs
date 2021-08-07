@@ -1,0 +1,126 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": [
+        {
+            "name": "Dynamic EmbeddedResource",
+            "tagFrom": "<!-- Start EmbeddedResource -->",
+            "tagTo": "<!-- End EmbeddedResource -->",
+            "template": "{{#each modules}}{{#notEqual name \"Home\"}}\t\t<EmbeddedResource Include=\"$(MSBuildThisFileDirectory)Views\\\\{{capitalize name}}.xaml\"/>\n\t\t{{/notEqual}}{{/each}}"
+        },
+        {
+            "name": "Dynamic Resources .cs",
+            "tagFrom": "<!-- Start Dynamic Resources .cs -->",
+            "tagTo": "   <!-- End Dynamic Resources .cs -->",
+            "template": "{{#each resources.0._resources}}{{#notEqual name \"Home\"}}\t\t<Compile Include=\"$(MSBuildThisFileDirectory)Models\\\\{{capitalize name}}.cs\"/>\n\t\t<Compile Include=\"$(MSBuildThisFileDirectory)Models\\Base\\\\{{capitalize name}}Base.cs\"/>\n\t\t<Compile Include=\"$(MSBuildThisFileDirectory)Rest\\\\{{capitalize name}}RestService.cs\"/>\n\t\t<Compile Include=\"$(MSBuildThisFileDirectory)Rest\\Base\\\\{{capitalize name}}RestServiceBase.cs\"/>\n{{/notEqual}}{{/each}}"
+        },
+        {
+            "name": "Dynamic ViewModels",
+            "tagFrom": "<!-- Start ViewModels -->",
+            "tagTo": "   <!-- End ViewModels -->",
+            "template": "{{#each modules}}{{#notEqual name \"Home\"}}\t\t<Compile Include=\"$(MSBuildThisFileDirectory)ViewModels\\ResourcesViewModel\\\\{{capitalize name}}ViewModel.cs\"/>\n{{/notEqual}}{{/each}}"
+        },
+        {
+            "name": "Dynamic Pages",
+            "tagFrom": "<!-- Start Dynamic Pages -->",
+            "tagTo": "   <!-- End Dynamic Pages -->",
+            "template": "{{#each modules}}{{#notEqual name \"Home\"}}\t\t<Compile Include=\"$(MSBuildThisFileDirectory)Views\\\\{{capitalize name}}.xaml.cs\">\n\t\t\t<DependentUpon>{{capitalize name}}.xaml</DependentUpon>\n\t\t</Compile>\n{{/notEqual}}{{/each}}"
+        }
+    ]
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>{AAC4934D-3E21-46E1-A0F1-647096E91C5C}</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>{{project.name}}</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- Start EmbeddedResource -->
+
+    <!-- End EmbeddedResource -->
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)App.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)MasterPage.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\RegisterNewUser.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\LoginPage.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\Profile.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\UsersListStatic.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Extensions\ChangePasswordPopUp.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Extensions\CustomAlertPopUp.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Extensions\PickerPopUp.xaml" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Views\LoadingView.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Properties.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Rest\RestClient.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Settings.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MasterPage.xaml.cs">
+      <DependentUpon>MasterPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Rest\Security\LoginRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\BaseViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ChangePasswordPopUpViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\LoginPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\MasterPageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ProfilePageViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\RegisterNewUserViewModel.cs" />
+    <!-- Start Dynamic Resources .cs -->
+    
+    <!-- End Dynamic Resources .cs -->
+    <!-- Start ViewModels -->
+    
+    <!-- End ViewModels -->
+    <!-- Start Dynamic Pages -->
+
+    <!-- End Dynamic Pages -->
+    <Compile Include="$(MSBuildThisFileDirectory)Views\RegisterNewUser.xaml.cs">
+      <DependentUpon>RegisterNewUser.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\LoginPage.xaml.cs">
+      <DependentUpon>LoginPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml.cs">
+      <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\Profile.xaml.cs">
+      <DependentUpon>Profile.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\ChangePasswordPopUp.xaml.cs">
+      <DependentUpon>ChangePasswordPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\CustomAlertPopUp.xaml.cs">
+      <DependentUpon>CustomAlertPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\MasterPageItem.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\CustomViewCell.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\PickerPopUp.xaml.cs">
+      <DependentUpon>PickerPopUp.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Extensions\Events\LoginEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\LoadingView.xaml.cs">
+      <DependentUpon>LoadingView.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Support\BaseBindableObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Rest\Security\TokenExpiredHandler.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\UsersListStaticViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Views\UsersListStatic.xaml.cs">
+      <DependentUpon>UsersListStatic.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)ViewModels\ResourcesViewModel\ " />
+    <Folder Include="$(MSBuildThisFileDirectory)Extensions\Events\ " />
+  </ItemGroup>
+</Project>

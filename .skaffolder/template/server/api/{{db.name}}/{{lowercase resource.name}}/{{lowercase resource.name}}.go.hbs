@@ -1,0 +1,91 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "resource",
+    "overwrite": true,
+    "_partials": [
+        {
+            "template": "\n\t{{#each resource._services}}\n\trouter.Group(func(router chi.Router) { {{#notNull _roles}}\n\t\trouter.Use(security.HasRole({{#joinObj2 _roles 'name'}}{{/joinObj2}})){{/notNull}}{{#notEqual name \"changePassword\"}}\n\t\trouter.{{capitalize (lowercase method) }}(\"{{editUrlParamGo url}}\", config.{{name}}){{/notEqual}}{{#equal name \"changePassword\"}}\n\t\trouter.{{capitalize (lowercase method) }}(\"{{editUrlParamGo url}}\", config.{{name}}Custom){{/equal}}\n\t})\n\n{{/each}}",
+            "tagFrom": "// start routing",
+            "tagTo": "// end routing",
+            "name": "Partial routing"
+        }
+    ]
+}
+**** END PROPERTIES SKAFFOLDER ****
+package {{lowercase resource.name}}
+
+import (
+	"skaffolder/{{project.name}}/config"
+	"skaffolder/{{project.name}}/security"
+
+	"github.com/go-chi/chi"
+	{{#equal resource.name "User"}}
+
+	"encoding/json"
+	"errors"
+	"net/http"
+	"github.com/globalsign/mgo/bson"
+	"github.com/go-chi/render"
+	{{/equal}}
+)
+
+type Config struct {
+	*config.Config
+}
+
+func New(configuration *config.Config) *Config {
+	return &Config{configuration}
+}
+
+// Routes
+func (config *Config) Routes() *chi.Mux {
+	router := chi.NewRouter()
+
+	// start routing
+	// end routing
+
+	// Write here your custom APIs
+	// EXAMPLE :
+
+	/**
+	router.Group(func(router chi.Router) {
+		router.Get("/", config.listCustom) // Create the listCustom method in this file
+	})
+	*/
+
+	return router
+}
+{{#equal resource.name "User"}}
+
+/*
+Name: changePassword
+Description: Change password of user from admin
+Params:
+*/
+func (config *Config) changePasswordCustom(writer http.ResponseWriter, req *http.Request) {
+
+	// Get body vars
+	type PwdUser struct {
+		Id            string `json:"id"`
+		PasswordAdmin string `json:"passwordAdmin"`
+		PasswordNew   string `json:"passwordNew"`
+	}
+	var body PwdUser
+	json.NewDecoder(req.Body).Decode(&body)
+
+	// Check admin password
+	var result User
+	err := config.Database.C("User").Find(bson.M{"username": "admin", "password": body.PasswordAdmin}).One(&result)
+	if err != nil {
+		render.Status(req, 403)
+		err = errors.New("Old password not valid")
+		render.JSON(writer, req, nil)
+		return
+	}
+
+	// Update password
+	config.Database.C("User").UpdateId(bson.ObjectIdHex(body.Id), bson.M{"$set": bson.M{"password": body.PasswordNew}})
+
+	render.JSON(writer, req, nil)
+}
+{{/equal}}

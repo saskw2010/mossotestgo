@@ -1,0 +1,76 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": false,
+    "_partials": [
+        {
+            "name": "Signature",
+            "tagFrom": "//Start Signature",
+            "tagTo": "//End Signature",
+            "template": "// SZqusKxjlbYc9j7Ym/wEL/nMPwONZZ2Qzg4+XMGwOTA= "
+        }
+    ]
+}
+**** END PROPERTIES SKAFFOLDER ****
+using {{project.name}}.Extensions;
+using {{project.name}}.Rest;
+using {{project.name}}.Rest.Security;
+using {{project.name}}.Views;
+using Rg.Plugins.Popup.Services;
+using Xamarin.Forms;
+using Xamarin.Forms.Xaml;
+
+[assembly: XamlCompilation(XamlCompilationOptions.Compile)]
+namespace {{project.name}}
+{
+    public partial class App : Application
+    {
+        #region Constants
+
+        readonly static string POPUP_TOKEN_EXPIRED = "Looks like your token has expired, please log in again.";
+
+        #endregion
+        
+        #region Services
+        
+        {{#each resources.0._resources}}
+        public static {{capitalize name}}RestService {{capitalize name}}Service = new {{capitalize name}}RestService();
+        {{/each}}
+        public static LoginRestService LoginService = new LoginRestService();
+        
+        #endregion
+
+        public App()
+        {
+            InitializeComponent();
+
+            ShowLoginPage();
+        }
+
+        protected override void OnStart()
+        {
+            // when the app starts, it subscribe to the client handler that check the presence of token
+            MessagingCenter.Subscribe<TokenExpiredHandler, bool>(this, TokenExpiredHandler.TOKEN_EXPIRED_MESSAGE, async (arg1, arg2) =>
+            {
+                CustomAlertPopUp popup = new CustomAlertPopUp(POPUP_TOKEN_EXPIRED);
+                popup.ButtonClickedEvent += (sender, e) => ShowLoginPage();
+                popup.DismissTappedEvent += (sender, e) => ShowLoginPage();
+
+                await PopupNavigation.Instance.PushAsync(popup);
+            });
+        }
+
+        protected override async void OnResume()
+        {
+            if (!await LoginService.VerifyToken(Settings.AuthenticationToken))
+                ShowLoginPage();
+            else
+                MainPage = new MasterPage();
+        }
+
+        void ShowLoginPage()
+        {
+            MainPage = new NavigationPage(new LoginPage());
+        }
+    }
+}

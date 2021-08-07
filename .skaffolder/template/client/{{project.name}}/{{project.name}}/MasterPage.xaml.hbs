@@ -1,0 +1,52 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<MasterDetailPage xmlns="http://xamarin.com/schemas/2014/forms"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+                  x:Class="{{project.name}}.MasterPage"
+                  NavigationPage.HasNavigationBar="False">
+    <MasterDetailPage.Master>
+        <ContentPage Title=" " BackgroundColor="{StaticResource Primary}" Padding="0, 40, 0, 0" Icon="{StaticResource menu_img}">
+           <StackLayout HorizontalOptions="FillAndExpand" VerticalOptions="FillAndExpand" Spacing="0">
+                <ListView x:Name="listView" SeparatorVisibility="None" BackgroundColor="Transparent">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <ViewCell>
+                                <StackLayout>
+                                    <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="18" TextColor="White"
+                                           HorizontalTextAlignment="Center" VerticalOptions="CenterAndExpand"/>
+                                </StackLayout>
+                            </ViewCell>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+                <BoxView BackgroundColor="White" HeightRequest="2"/>
+                <StackLayout Padding="0, 10">
+                    <StackLayout.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Button" CanCascade="false">
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="TextColor" Value="White"/>
+                                <Setter Property="BackgroundColor" Value="Transparent"/>
+                                <Setter Property="CornerRadius" Value="0"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </StackLayout.Resources>
+                    <Button Text="Profile" Clicked="Button_Profile_Clicked" IsVisible="{Binding IsAllowed}"/>
+                    <Button Text="Logout" Clicked="Button_Logout_Clicked"/>
+                </StackLayout>
+            </StackLayout>
+        </ContentPage>
+    </MasterDetailPage.Master>
+    <MasterDetailPage.Detail>
+        <ContentPage />
+    </MasterDetailPage.Detail>
+</MasterDetailPage>
+
+

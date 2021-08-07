@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:{{project.name}}.Views"
+             x:Class="{{project.name}}.Views.{{capitalize module.name}}"
+             Title="{{capitalize crudResource.name}}">
+    <ContentPage.Content>
+        <AbsoluteLayout>
+            <Frame AbsoluteLayout.LayoutBounds="1, 1, 1, 1" AbsoluteLayout.LayoutFlags="All" Margin="15" VerticalOptions="StartAndExpand">
+                <StackLayout Spacing="15">
+                    <StackLayout.Resources>
+                        <ResourceDictionary>
+                            <Style TargetType="Label">
+                                <Setter Property="FontSize" Value="18"/>
+                                <Setter Property="FontAttributes" Value="Bold"/>
+                                <Setter Property="TextColor" Value="{StaticResource Secondary}"/>
+                            </Style>
+                            <Style TargetType="Entry">
+                                <Setter Property="TextColor" Value="{StaticResource Primary}"/>
+                                <Setter Property="IsSpellCheckEnabled" Value="False"/>
+                                <Setter Property="Keyboard" Value="Text"/>
+                            </Style>
+                            <Style TargetType="StackLayout">
+                                <Setter Property="Spacing" Value="5"/>
+                            </Style>
+                        </ResourceDictionary>
+                    </StackLayout.Resources>{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#notEqual type "Date"}}{{#isNull _enum}}
+                    <StackLayout>
+                        <Label Text="{{capitalize name}}"/>
+                        <Entry x:Name="entry_{{lowercase name}}" Text="{Binding {{capitalize ./../crudResource.name}}.{{capitalize name}}, Mode=TwoWay}"
+                               Placeholder="{{lowercase name}}" {{#equal type "Number"}}Keyboard="Numeric"{{/equal}} {{#equal type "Integer"}}Keyboard="Numeric"{{/equal}} TextChanged="DataChanged_Handler"/>
+                    </StackLayout>{{/isNull}}{{/notEqual}}{{/notEqual}}{{/each}}{{#each crudResource._entity._attrs}}{{#notNull _enum}}
+                    <StackLayout>
+                        <Label Text="{{capitalize name}}"/>
+                        <Picker x:Name="picker_{{lowercase name}}" Title="{{lowercase name}}" TextColor="{StaticResource Primary}" 
+                                SelectedItem="{ Binding {{capitalize ./../crudResource.name}}.{{capitalize name}} }"/>
+                    </StackLayout>{{/notNull}}{{/each}}{{#each crudResource._entity._attrs}}{{#notEqual name "password"}}{{#equal type "Date"}}{{#isNull _enum}}
+                    <StackLayout>
+                        <Label Text="{{capitalize name}}"/>
+                        <DatePicker x:Name="datepicker_{{lowercase name}}" TextColor="{StaticResource Primary}" Date="{ Binding {{capitalize ./../crudResource.name}}.{{capitalize name}} }" 
+                                    MinimumDate="01/01/1900"/>
+                    </StackLayout>{{/isNull}}{{/equal}}{{/notEqual}}{{/each}}{{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+                    <RelativeLayout HeightRequest="30">
+                        <Label x:Name="{{lowercase name}}_list_label" Text="{{capitalize name}} List"/>
+                        <Image Source="{StaticResource add_img}" 
+                           RelativeLayout.XConstraint="{ConstraintExpression Type=RelativeToView, ElementName={{lowercase name}}_list_label, Property=Width, Constant=5}"
+                           RelativeLayout.HeightConstraint="{ConstraintExpression Type=RelativeToView, ElementName={{lowercase name}}_list_label, Property=Height}"/>  
+                        <RelativeLayout.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding {{capitalize _ent2.name}}PickerCommand }"/>
+                        </RelativeLayout.GestureRecognizers>
+                    </RelativeLayout>
+                    <ListView Margin="0, -10, 0, 0" ItemsSource="{Binding {{capitalize name}}List}"
+                              IsPullToRefreshEnabled="false" ItemTapped="{{capitalize _ent2.name}}Selected_Handler">
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <ViewCell> 
+                                    <StackLayout>  
+                                        <Label Text="{Binding QualifiedName}" TextColor="{StaticResource Primary}" VerticalOptions="CenterAndExpand" 
+                                               FontAttributes="None" FontSize="Default"/>
+                                    </StackLayout>
+                                </ViewCell>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>{{/equal}}{{/equal}}{{/each}}{{#each crudResource._entity._relations}}{{#equal type "1:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+                    <StackLayout>
+                        <Label Text="{{capitalize _ent2.name}}"/>
+                        <Picker x:Name="picker_{{lowercase name}}" Title="{{lowercase name}}" ItemsSource="{Binding {{capitalize _ent2.name}}List}" TextColor="{StaticResource Primary}"
+                                SelectedItem="{ Binding {{capitalize name}} }" ItemDisplayBinding="{Binding QualifiedName}"/>
+                    </StackLayout>{{/equal}}{{/equal}}{{/each}}
+                    <Button x:Name="button_save" Text="Save" Clicked="Save{{capitalize crudResource.name}}_Handler" IsEnabled="false"/>
+                </StackLayout>
+            </Frame>
+            <local:LoadingView x:Name="loading_view" AbsoluteLayout.LayoutFlags="All" AbsoluteLayout.LayoutBounds="1, 1, 1, 1"/>
+        </AbsoluteLayout>
+    </ContentPage.Content>
+</ContentPage>

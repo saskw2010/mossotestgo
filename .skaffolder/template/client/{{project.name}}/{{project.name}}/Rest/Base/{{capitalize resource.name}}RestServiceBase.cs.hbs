@@ -1,0 +1,150 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "resource",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+using System;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Text;
+using System.Threading.Tasks;
+using {{project.name}}.Models;
+using Newtonsoft.Json;
+
+namespace {{project.name}}.Rest.Base
+{
+    public class {{capitalize resource.name}}RestServiceBase : RestClient
+    {
+        const string {{capitalize resource.name}}Api = "{{replace resource.url "/" ""}}/";{{#each resource._services}}{{#equal crudAction "delete"}}
+
+        //DELETE
+        /// <summary>
+        /// Delete a {{capitalize ./../resource.name}}
+        /// </summary>
+        /// <param name="id">Id of the {{capitalize ./../resource.name}} to Delete</param>
+        /// <returns>void</returns>
+        public async Task DELETE(string id)
+        {
+            try
+            {
+                var response = await Client.DeleteAsync({{capitalize ./../resource.name}}Api + id);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(@"				ERROR{0}", e);
+            }
+        }{{/equal}}{{#equal crudAction "create"}}
+
+        //POST
+        /// <summary>
+        /// Add a new {{capitalize ./../resource.name}}
+        /// </summary>
+        /// <param name="item">{{capitalize ./../resource.name}} to Add</param>
+        /// <returns>void</returns>
+        public async Task POST({{capitalize ./../resource.name}} item)
+        {
+            try
+            {   {{#equal ./../resource.name "User"}}item.Password = App.LoginService.EncryptPassword(item.Password);{{/equal}}
+                var json = JsonConvert.SerializeObject(item);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await Client.PostAsync({{capitalize ./../resource.name}}Api, content);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(@"				ERROR{0}", e);
+            }
+        }{{/equal}}{{#equal crudAction "update"}}
+
+        //PUT
+        /// <summary>
+        /// Update info of a {{capitalize ./../resource.name}}
+        /// </summary>
+        /// <param name="item">{{capitalize ./../resource.name}} to Update</param>
+        /// <returns></returns>
+        public async Task PUT({{capitalize ./../resource.name}} item)
+        {
+            try
+            {
+                var json = JsonConvert.SerializeObject(item);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await Client.PostAsync({{capitalize ./../resource.name}}Api + item.Id, content);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(@"				ERROR{0}", e);
+            }
+        }{{/equal}}{{#equal crudAction "list"}}
+
+        //GET
+        /// <summary>
+        /// Get the complete list of {{capitalize ./../resource.name}}s
+        /// </summary>
+        /// <returns>{{capitalize ./../resource.name}} List</returns>
+        public async Task<ObservableCollection<{{capitalize ./../resource.name}}>> GETList()
+        {
+            ObservableCollection<{{capitalize ./../resource.name}}> {{lowercase ./../resource.name}}list = new ObservableCollection<{{capitalize ./../resource.name}}>();
+            try
+            {
+                var content = await Client.GetStringAsync({{capitalize ./../resource.name}}Api);
+                {{lowercase ./../resource.name}}list = JsonConvert.DeserializeObject<ObservableCollection<{{capitalize ./../resource.name}}>>(content);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(@"				ERROR {0}", e);
+            }
+            return {{lowercase ./../resource.name}}list;
+        }{{/equal}}{{#equal crudAction "get"}}
+
+        //GET ID
+        /// <summary>
+        /// Get a {{capitalize ./../resource.name}}
+        /// </summary>
+        /// <returns>{{capitalize ./../resource.name}}</returns>
+        public async Task<{{capitalize ./../resource.name}}> GETId(string {{lowercase ./../resource.name}}Id)
+        {
+            {{capitalize ./../resource.name}} {{lowercase ./../resource.name}} = new {{capitalize ./../resource.name}}();
+            try
+            {
+                var content = await Client.GetStringAsync({{capitalize ./../resource.name}}Api + {{lowercase ./../resource.name}}Id);
+                {{lowercase ./../resource.name}} = JsonConvert.DeserializeObject<{{capitalize ./../resource.name}}>(content);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(@"				ERROR {0}", e);
+            }
+            return {{lowercase ./../resource.name}};
+        }{{/equal}}{{#startWith crudAction "findBy"}}
+
+        //{{capitalize name}}
+        /// <summary>
+        /// Get a  {{capitalize ./../resource.name}} using {{capitalize name}}
+        /// </summary>
+        /// <returns>{{capitalize ./../resource.name}}</returns>
+        public async Task<{{capitalize ./../resource.name}}> {{name}}(string id)
+        {
+            {{capitalize ./../resource.name}} {{lowercase ./../resource.name}} = new {{capitalize ./../resource.name}}();
+            try
+            {
+                var content = await Client.GetStringAsync({{capitalize ./../resource.name}}Api + "{{name}}/" + id  );
+                {{lowercase ./../resource.name}} = JsonConvert.DeserializeObject<{{capitalize ./../resource.name}}>(content);
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(@"				ERROR {0}", e);
+            }
+            return {{lowercase ./../resource.name}};
+        }{{/startWith}}{{#isNull crudAction}}
+
+        //{{uppercase name}}
+        /// <summary>
+        ///This is your API     
+        ///</summary>
+        public async Task {{name}}()
+        {
+
+        }{{/isNull}}{{/each}}
+    }
+}

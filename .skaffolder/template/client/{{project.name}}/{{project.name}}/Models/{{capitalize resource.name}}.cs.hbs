@@ -1,0 +1,15 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "resource",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+using {{project.name}}.Models.Base;
+
+namespace {{project.name}}.Models
+{
+    public class {{capitalize resource.name}} : {{capitalize resource.name}}Base
+    {
+    }
+}

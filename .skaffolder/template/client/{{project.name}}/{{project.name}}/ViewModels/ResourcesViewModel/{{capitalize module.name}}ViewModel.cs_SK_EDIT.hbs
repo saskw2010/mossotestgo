@@ -1,0 +1,179 @@
+using System;
+using System.Collections.ObjectModel;
+using System.Linq;
+using System.Threading.Tasks;
+using System.Windows.Input;
+using {{project.name}}.Extensions;
+using {{project.name}}.Models;
+using Rg.Plugins.Popup.Services;
+using Xamarin.Forms;
+
+namespace {{project.name}}.ViewModels.ResourcesViewModel
+{
+    public class {{capitalize module.name}}ViewModel : BaseViewModel
+    {   
+        {{#each crudResource._entity._relations}}{{#equal ./../crudResource._entity._id _ent1._id}}{{#equal type "m:m"}}{{#equal @index 0}}#region Constants{{/equal}}{{/equal}}{{/equal}}{{/each}}
+        {{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+        readonly static string POPUP_NO_MORE_{{uppercase _ent2.name}} = "There are no more available {{capitalize _ent2.name}}";
+        readonly static string POPUP_DELETE_{{uppercase _ent2.name}} = "Are you sure you want to remove this {{capitalize _ent2.name}}?";
+        {{/equal}}{{/equal}}{{/each}}
+        {{#each crudResource._entity._relations}}{{#equal ./../crudResource._entity._id _ent1._id}}{{#equal type "m:m"}}{{#equal @index 0}}#endregion
+        
+        #region Events
+
+        public event EventHandler DataLoadedEvent;
+
+        #endregion{{/equal}}{{/equal}}{{/equal}}{{/each}}
+        
+        #region Attributes and Properties
+
+        public bool Editing = true;
+
+        {{capitalize crudResource.name}} _{{lowercase crudResource.name}};
+        public {{capitalize crudResource.name}} {{capitalize crudResource.name}}
+        {
+            get { return _{{lowercase crudResource.name}}; }
+            set { SetValue(ref _{{lowercase crudResource.name}}, value); }
+        }{{!-- One to Many relations --}}
+        {{#each crudResource._entity._relations}}{{#equal type "1:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+        // this is the collection is used as SelectedItem for the {{capitalize _ent2.name}} picker 
+        {{capitalize _ent2.name}} _{{lowercase name}};
+        public {{capitalize _ent2.name}} {{capitalize name}}
+        {
+            get { return _{{lowercase name}}; }
+            set { SetValue(ref _{{lowercase name}}, value); {{capitalize _ent1.name}}.{{capitalize name}} = value.Id; }
+        }
+
+        // this collection is used to store all {{capitalize _ent2.name}} available 
+        ObservableCollection<{{capitalize _ent2.name}}> _{{lowercase _ent2.name}}List;
+
+        // this is the collection is used as ItemSource for the {{capitalize _ent2.name}} picker 
+        public ObservableCollection<{{capitalize _ent2.name}}> {{capitalize _ent2.name}}List
+        {
+            get { return _{{lowercase _ent2.name}}List; }
+            set { SetValue(ref _{{lowercase _ent2.name}}List, value); }
+        }{{/equal}}{{/equal}}{{/each}}
+        {{!-- Many To Many relations --}}{{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+        // this collection is used to store all {{capitalize _ent2.name}}
+        ObservableCollection<{{capitalize _ent2.name}}> _{{lowercase _ent2.name}}AllList;
+
+        // this collection is used as ItemSource for the {{capitalize name}} ListView 
+        ObservableCollection<{{capitalize _ent2.name}}> _{{lowercase name}}List;
+
+        public ObservableCollection<{{capitalize _ent2.name}}> {{capitalize name}}List
+        {
+            get { return _{{lowercase name}}List; }
+            set { SetValue(ref _{{lowercase name}}List, value); }
+        }
+        {{/equal}}{{/equal}}{{/each}}
+        #endregion
+
+        {{#each crudResource._entity._relations}}{{#equal ./../crudResource._entity._id _ent1._id}}{{#equal type "m:m"}}{{#equal @index 0}}#region Commands{{/equal}}{{/equal}}{{/equal}}{{/each}}
+        {{!-- Many To Many elements picker commands --}}{{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+        public ICommand {{capitalize _ent2.name}}PickerCommand => new Command(async () => await Pick{{capitalize _ent2.name}}FromList());
+        public ICommand {{capitalize _ent2.name}}PickedFromListCommand => new Command<{{capitalize _ent2.name}}>(async (obj) => await Remove{{capitalize _ent2.name}}FromList(obj));
+        {{/equal}}{{/equal}}{{/each}}
+        {{#each crudResource._entity._relations}}{{#equal ./../crudResource._entity._id _ent1._id}}{{#equal type "m:m"}}{{#equal @index 0}}#endregion{{/equal}}{{/equal}}{{/equal}}{{/each}}
+
+        public {{capitalize module.name}}ViewModel({{capitalize crudResource.name}} {{lowercase crudResource.name}}ToEdit)
+        {
+            if ({{lowercase crudResource.name}}ToEdit == null)
+            {
+                {{lowercase crudResource.name}}ToEdit = new {{capitalize crudResource.name}}(){{#each crudResource._entity._attrs}}{{#equal name "year"}}{ Year = DateTime.Now.Year }{{/equal}}{{/each}};
+                Editing = false;
+            }
+
+            {{capitalize crudResource.name}} = {{lowercase crudResource.name}}ToEdit;
+            {{!-- Only if there is at least one m:m/1:m relation --}}
+            {{#each crudResource._entity._relations}}{{#equal ./../crudResource._entity._id _ent1._id}}{{#equal @index 0}}
+            // async load lists
+            Task.Factory.StartNew(GetData);
+            {{/equal}}{{/equal}}{{/each}}
+        }
+        {{!-- Only if there is at least one m:m/1:m relation --}}
+        {{#each crudResource._entity._relations}}{{#equal ./../crudResource._entity._id _ent1._id}}{{#equal @index 0}}
+        async Task GetData()
+        {
+            OnLoadingStarted(EventArgs.Empty);
+            {{#each ./../crudResource._entity._relations}}{{#equal type "m:m"}}{{#notEqual ./../_ent1._id _ent2._id}}
+            _{{lowercase _ent2.name}}AllList = await App.{{capitalize _ent2.name}}Service.GETList();{{/notEqual}}{{/equal}}{{/each}}{{#each ./../crudResource._entity._relations}}{{#equal type "1:m"}}{{#notEqual ./../_ent1._id _ent2._id}}
+            {{capitalize _ent2.name}}List = await App.{{capitalize _ent2.name}}Service.GETList();{{/notEqual}}{{/equal}}{{/each}}
+
+            if (Editing)
+            {   {{#each ./../crudResource._entity._relations}}{{#equal type "1:m"}}{{#notEqual ./../_ent1._id _ent2._id}}
+                // get the {{capitalize _ent2.name}} from the {{capitalize _ent2.name}}List (the {{capitalize _ent1.name}} object only has its id)
+                {{capitalize name}} = _{{lowercase _ent2.name}}List.Single((arg) => arg.Id.Equals(_{{lowercase _ent1.name}}.{{capitalize name}}));{{/notEqual}}{{/equal}}{{/each}}{{#each ./../crudResource._entity._relations}}{{#equal type "m:m"}}{{#notEqual ./../_ent1._id _ent2._id}}
+                // get the {{capitalize name}}List from the _{{lowercase _ent2.name}}AllList (the {{capitalize _ent1.name}} object only has their ids)
+                {{capitalize name}}List = new ObservableCollection<{{capitalize _ent2.name}}>(_{{lowercase _ent2.name}}AllList.Where((arg) => {{capitalize _ent1.name}}.{{capitalize name}}.Contains(arg.Id)));{{/notEqual}}{{/equal}}{{/each}}
+            }
+            {{#each ./../crudResource._entity._relations}}{{#equal type "m:m"}}{{#notEqual ./../_ent1._id _ent2._id}}{{#equal @index 0}}else
+            { 
+                // if it's not an editing just initialize the lists{{/equal}}
+                {{capitalize name}}List = new ObservableCollection<{{capitalize _ent2.name}}>();
+           {{#equal @index 0}} }
+            // when the lists are ready notify the UI level
+            OnDataLoaded(EventArgs.Empty);{{/equal}}{{/notEqual}}{{/equal}}{{/each}}
+
+            OnLoadingEnded(EventArgs.Empty);
+        }
+        {{#each ./../crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal @index 0}}
+        protected virtual void OnDataLoaded(EventArgs e)
+        {
+            DataLoadedEvent?.Invoke(this, e);
+        }{{/equal}}{{/equal}}{{/each}}
+        {{/equal}}{{/equal}}{{/each}}
+        public async Task SaveOrEdit{{capitalize crudResource.name}}()
+        {
+            OnLoadingStarted(EventArgs.Empty);
+            {{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+            {{capitalize _ent1.name}}.{{capitalize name}} = {{capitalize name}}List.ToDictionary((arg) => arg.Id).Keys.ToArray();{{/equal}}{{/equal}}{{/each}}
+            
+            if (Editing)
+                await App.{{capitalize crudResource.name}}Service.PUT(_{{lowercase crudResource.name}});
+            else
+                await App.{{capitalize crudResource.name}}Service.POST(_{{lowercase crudResource.name}});
+
+            OnLoadingEnded(EventArgs.Empty);
+        }
+        {{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+        async Task Pick{{capitalize _ent2.name}}FromList()
+        {
+            if (_{{lowercase name}}List.Count != _{{lowercase _ent2.name}}AllList.Count)
+            {
+                // get available {{capitalize _ent2.name}}
+                var available{{capitalize _ent2.name}}List = _{{lowercase _ent2.name}}AllList.Except(_{{lowercase name}}List);
+
+                PickerPopUp popUp = new PickerPopUp(available{{capitalize _ent2.name}}List);
+                popUp.ItemSelectedEvent += (sender, e) =>
+                {
+                    // add the {{lowercase _ent2.name}} to the {{capitalize name}}List
+                    {{capitalize name}}List.Add(sender as {{capitalize _ent2.name}});
+                };
+
+                await PopupNavigation.Instance.PushAsync(popUp);
+            }
+            else
+            {
+                CustomAlertPopUp popUp = new CustomAlertPopUp(POPUP_NO_MORE_{{uppercase _ent2.name}});
+                await PopupNavigation.Instance.PushAsync(popUp);
+            }
+        }
+        {{/equal}}{{/equal}}{{/each}}
+        {{#each crudResource._entity._relations}}{{#equal type "m:m"}}{{#equal ./../crudResource._entity._id _ent1._id}}
+        async Task Remove{{capitalize _ent2.name}}FromList({{capitalize _ent2.name}} {{lowercase _ent2.name}})
+        {
+            CustomAlertPopUp popUp = new CustomAlertPopUp(POPUP_DELETE_{{uppercase _ent2.name}});
+            popUp.ButtonClickedEvent += (sender, e) =>
+            {
+                // remove the {{capitalize _ent2.name}} from the {{capitalize name}}List
+                {{capitalize name}}List.Remove({{lowercase _ent2.name}});
+
+                // move the {{capitalize _ent2.name}} in the _{{lowercase _ent2.name}}AllList
+                _{{lowercase _ent2.name}}AllList.Add({{lowercase _ent2.name}});
+            };
+
+            await PopupNavigation.Instance.PushAsync(popUp);
+        }
+        {{/equal}}{{/equal}}{{/each}}
+    }
+}

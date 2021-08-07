@@ -1,0 +1,54 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+<?xml version="1.0" encoding="utf-8"?>
+<pages:PopupPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:pages="clr-namespace:Rg.Plugins.Popup.Pages;assembly=Rg.Plugins.Popup"
+             x:Class="{{project.name}}.Extensions.PickerPopUp">
+    <AbsoluteLayout>
+        <Frame AbsoluteLayout.LayoutFlags="All"
+               VerticalOptions="Center"
+               Margin="30, 0, 30, 30">
+            <Frame.AbsoluteLayout.LayoutBounds>
+                <OnIdiom x:TypeArguments="Rectangle" Phone="0.5, 0.5, 1, 0.7" Tablet="0.5, 0.5, 0.7, 0.7"/>
+            </Frame.AbsoluteLayout.LayoutBounds>
+            <StackLayout>
+                <StackLayout Margin="0, 5, 0, 15" Orientation="Horizontal">
+                    <Label Text="Pick an Item"
+                           TextColor="{StaticResource Secondary}"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           VerticalOptions="CenterAndExpand"/>
+                     <Image VerticalOptions="CenterAndExpand" HorizontalOptions="EndAndExpand"
+                            Source="{StaticResource delete_img}" HeightRequest="20"> 
+                        <Image.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="Dismiss_PopUp_Handler"/>
+                        </Image.GestureRecognizers>
+                    </Image>
+                </StackLayout>
+                <StackLayout Spacing="15">
+                    <StackLayout>
+                        <ListView x:Name="listView" VerticalOptions="FillAndExpand" IsPullToRefreshEnabled="false" ItemTapped="ItemSelected_Handler">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+                                    <ViewCell>
+                                        <StackLayout>
+                                            <Label Text="{Binding QualifiedName}"
+                                                   TextColor="{StaticResource Primary}" VerticalOptions="CenterAndExpand" 
+                                                   FontAttributes="None" FontSize="Default"/>
+                                        </StackLayout>
+                                    </ViewCell>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </StackLayout>
+                </StackLayout>
+            </StackLayout>
+        </Frame>
+    </AbsoluteLayout>
+</pages:PopupPage>

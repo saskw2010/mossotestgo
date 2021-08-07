@@ -1,0 +1,20 @@
+**** PROPERTIES SKAFFOLDER ****
+{
+    "forEachObj": "oneTime",
+    "overwrite": true,
+    "_partials": []
+}
+**** END PROPERTIES SKAFFOLDER ****
+using System;
+namespace {{project.name}}.Extension.Events
+{
+    public class LoginEventArgs : EventArgs
+    {
+        public string Message { get; private set; }
+
+        public LoginEventArgs(string message)
+        {
+            Message = message;
+        }
+    }
+}
